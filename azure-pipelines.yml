@@ -23,7 +23,6 @@ stages:
             displayName: 'Build docker image'
             inputs:
               containerRegistry: 'google-artifact-registry'
-              repository: 'test'
               command: 'buildAndPush'
               Dockerfile: 'Dockerfile'
               addPipelineData: false
