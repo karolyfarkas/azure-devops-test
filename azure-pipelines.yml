@@ -36,7 +36,7 @@ stages:
             displayName: 'Build docker image'
             inputs:
               containerRegistry: 'google-artifact-registry'
-              repository: 'farkasret/test'
+              repository: 'farkasret/test/hello'
               command: 'buildAndPush'
               Dockerfile: 'Dockerfile'
               tags: '$(Build.BuildNumber)'
