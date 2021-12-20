@@ -26,6 +26,7 @@ stages:
               repository: 'farkasret/test/hello'
               command: 'buildAndPush'
               Dockerfile: 'Dockerfile'
+              tags: '$(Build.BuildNumber)'
               addPipelineData: false
             
 
