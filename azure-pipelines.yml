@@ -72,6 +72,14 @@ stages:
                 inputs:
                   targetType: 'inline'
                   script: 'ls'
+              - script: |
+                  git config user.email azure-pipelines@aka.ms
+                  git config user.name azure-pipelines
+                  git checkout main
+                  sed -i 's|appVersion:.*|appVersion: "$(Build.BuildNumber)"|' helm-chart/Chart.yaml
+                  git add helm-chart/Chart.yaml
+                  git commit -am 'autorelease $(Build.BuildNumber) by pipeline'
+                  git push
               - task: HelmInstaller@0
                 inputs:
                   helmVersion: '2.14.1'
@@ -84,4 +92,5 @@ stages:
                   command: 'upgrade'
                   chartType: 'Name'
                   chartName: 'helm-chart'
+                  recreate: true
 
