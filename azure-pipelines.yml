@@ -13,10 +13,8 @@ stages:
 
     jobs:
       - job: Build
-
         pool:
           vmImage: ubuntu-latest
-        
         steps:
           - task: Bash@3
             displayName: 'troubleshooting...'
@@ -48,12 +46,11 @@ stages:
     dependsOn: Build
     jobs:
       - job: 
-
         pool:
           vmImage: ubuntu-latest
-
         steps:
         - task: Bash@3
+          displayName: 'Testing'
           inputs:
             targetType: 'inline'
             script: 'echo Testing....1....2...1...2....'
@@ -62,35 +59,19 @@ stages:
     dependsOn: Test
     jobs:
       - deployment:
-
         pool:
           vmImage: ubuntu-latest
-
         environment: 'Dev'
         strategy:
          runOnce:
            deploy:
              steps:
-
               - checkout: hello-deploy
-              - task: Bash@3
-                inputs:
-                  targetType: 'inline'
-                  script: |
-                    git config user.email azure-pipelines@aka.ms
-                    git config user.name azure-pipelines
-                    git checkout main
-                    git commit -am 'autorelease $(Build.BuildNumber) by pipeline'
-                    git push
               - task: Bash@3
                 displayName: 'troubleshooting...'
                 inputs:
                   targetType: 'inline'
                   script: 'ls'
-              - task: Bash@3
-                inputs:
-                  targetType: 'inline'
-                  script: 'echo deploying to GKE version - "$(Build.BuildNumber)"'
               - task: HelmInstaller@0
                 inputs:
                   helmVersion: '2.14.1'
