@@ -3,6 +3,7 @@ trigger:
 
 stages:
   - stage: Build
+
     jobs:
       - job: Build
 
@@ -48,6 +49,12 @@ stages:
          runOnce:
            deploy:
              steps:
+              - task: DownloadGitHubRelease@0
+                inputs:
+                  connection: 'karolyfarkas-github'
+                  userRepository: 'karolyfarkas/azure-devops-test'
+                  defaultVersionType: 'latest'
+                  downloadPath: '$(System.ArtifactsDirectory)'
               - task: Bash@3
                 inputs:
                   targetType: 'inline'
