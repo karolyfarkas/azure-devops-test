@@ -14,7 +14,11 @@ stages:
             inputs:
               helmVersion: '2.14.1'
               installKubectl: true
-          - task:
+          - task: Bash@3
+            inputs:
+              targetType: 'inline'
+              script: |      
+                echo 'Building the application.... bip.. bop...'
             
 
   - stage: DeployTest
@@ -29,3 +33,4 @@ stages:
            deploy:
              steps:
                -  
+
