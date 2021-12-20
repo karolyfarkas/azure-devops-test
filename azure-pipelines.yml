@@ -1,6 +1,13 @@
 trigger:
 - main
 
+resources:
+      repositories:
+      - repository: hello-deploy
+        type: github
+        endpoint: karolyfarkas-github
+        name: karolyfarkas/hello-deploy
+
 stages:
   - stage: Build
 
@@ -12,6 +19,7 @@ stages:
         
         steps:
           - task: Bash@3
+            displayName: 'troubleshooting...'
             inputs:
               targetType: 'inline'
               script: 'ls'
@@ -36,26 +44,45 @@ stages:
               tags: '$(Build.BuildNumber)'
               addPipelineData: false
             
-
-  - stage: DeployTest
+  - stage: Test
     dependsOn: Build
-    displayName: 'Deploy to Dev'
     jobs:
-      - deployment:
+      - job: 
+
         pool:
           vmImage: ubuntu-latest
+
+        steps:
+        - task: Bash@3
+          inputs:
+            targetType: 'inline'
+            script: 'echo Testing....1....2...1...2....'
+
+  - stage: Deploy
+    dependsOn: Test
+    jobs:
+      - deployment:
+
+        pool:
+          vmImage: ubuntu-latest
+
         environment: 'Dev'
         strategy:
          runOnce:
            deploy:
              steps:
-              - task: DownloadGitHubRelease@0
-                inputs:
-                  connection: 'karolyfarkas-github'
-                  userRepository: 'karolyfarkas/azure-devops-test'
-                  defaultVersionType: 'latest'
-                  downloadPath: '$(System.ArtifactsDirectory)'
+
               - task: Bash@3
+                inputs:
+                  targetType: 'inline'
+                  script: |
+                    git config user.email azure-pipelines@aka.ms
+                    git config user.name azure-pipelines
+                    git checkout main
+                    git commit -am 'autorelease $(Build.BuildNumber) by pipeline'
+                    git push
+              - task: Bash@3
+                displayName: 'troubleshooting...'
                 inputs:
                   targetType: 'inline'
                   script: 'ls'
@@ -75,3 +102,4 @@ stages:
                   command: 'upgrade'
                   chartType: 'Name'
                   chartName: 'helm-chart'
+
