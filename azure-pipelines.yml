@@ -4,7 +4,7 @@ trigger:
 stages:
   - stage: Build
     jobs:
-      - job: 'Build App and Docker image'
+      - job: BuildAppandDockerimage
 
         pool:
           vmImage: ubuntu-latest
