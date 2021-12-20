@@ -36,7 +36,7 @@ stages:
             displayName: 'Build docker image'
             inputs:
               containerRegistry: 'google-artifact-registry'
-              repository: 'farkasret/test/hello'
+              repository: 'farkasret/test'
               command: 'buildAndPush'
               Dockerfile: 'Dockerfile'
               tags: '$(Build.BuildNumber)'
@@ -74,6 +74,7 @@ stages:
                   targetType: 'inline'
                   script: 'ls'
               - task: Bash@3
+                displayName: 'Change version number in helm chart'
                 inputs:
                   targetType: 'inline'
                   script: |
