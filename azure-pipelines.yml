@@ -57,4 +57,6 @@ stages:
                   connectionType: 'Kubernetes Service Connection'
                   kubernetesServiceConnection: 'gke-test-cluster'
                   namespace: 'default'
-                  command: 'ls'
+                  command: 'upgrade'
+                  chartType: 'Name'
+                  chartName: 'helm-chart'
