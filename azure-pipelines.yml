@@ -23,13 +23,14 @@ stages:
             displayName: 'Build docker image'
             inputs:
               containerRegistry: 'google-artifact-registry'
-              repository: 'farkasret/test'
+              repository: 'farkasret/test/hello'
               command: 'buildAndPush'
               Dockerfile: 'Dockerfile'
               addPipelineData: false
             
 
   - stage: DeployTest
+    dependsOn: Build
     displayName: 'Deploy to Dev'
     jobs:
       - deployment:
