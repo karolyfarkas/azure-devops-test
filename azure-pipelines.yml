@@ -19,6 +19,14 @@ stages:
               targetType: 'inline'
               script: |      
                 echo 'Building the application.... bip.. bop...'
+          - task: Docker@2
+            displayName: 'Build docker image'
+            inputs:
+              containerRegistry: 'google-artifact-registry'
+              repository: 'test'
+              command: 'build'
+              Dockerfile: Dockerfile
+              addPipelineData: false
             
 
   - stage: DeployTest
@@ -32,5 +40,9 @@ stages:
          runOnce:
            deploy:
              steps:
-               -  
-
+              - task: Docker@2
+                inputs:
+                  containerRegistry: 'google-artifact-registry'
+                  repository: 'test'
+                  command: 'push'
+                  addPipelineData: false
