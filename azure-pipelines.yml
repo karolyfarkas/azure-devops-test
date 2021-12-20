@@ -45,7 +45,7 @@ stages:
   - stage: Test
     dependsOn: Build
     jobs:
-      - job: 
+      - job: Test
         pool:
           vmImage: ubuntu-latest
         steps:
@@ -67,6 +67,7 @@ stages:
            deploy:
              steps:
               - checkout: hello-deploy
+                persistCredentials: true
               - task: Bash@3
                 displayName: 'troubleshooting...'
                 inputs:
