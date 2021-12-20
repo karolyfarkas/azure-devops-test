@@ -24,8 +24,8 @@ stages:
             inputs:
               containerRegistry: 'google-artifact-registry'
               repository: 'test'
-              command: 'build'
-              Dockerfile: Dockerfile
+              command: 'buildAndPush'
+              Dockerfile: 'Dockerfile'
               addPipelineData: false
             
 
@@ -40,9 +40,7 @@ stages:
          runOnce:
            deploy:
              steps:
-              - task: Docker@2
+              - task: Bash@3
                 inputs:
-                  containerRegistry: 'google-artifact-registry'
-                  repository: 'test'
-                  command: 'push'
-                  addPipelineData: false
+                  targetType: 'inline'
+                  script: 'echo ''deploying to GKE'''
