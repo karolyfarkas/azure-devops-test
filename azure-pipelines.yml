@@ -72,6 +72,7 @@ stages:
     dependsOn: TestImage
     jobs:
       - deployment: DeployToTest
+        displayName: 'Deploy to Test'
         pool:
           vmImage: ubuntu-latest
         environment: 'Dev'
@@ -112,11 +113,29 @@ stages:
                   chartName: 'helm-chart'
                   releaseName: 'hello'
 
+  - stage: TestApp
+    displayName: 'Test the Application'
+    dependsOn: DeployToTest
+    jobs:
+      - job: TestApp
+        displayName: 'Test the Application'
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+        - task: HelmDeploy@0
+          inputs:
+            connectionType: 'Kubernetes Service Connection'
+            kubernetesServiceConnection: 'gke-test-cluster'
+            namespace: 'test'
+            command: 'uninstall'
+            releaseName: 'hello'
+
   - stage: DeployToProd
     displayName: 'Deploy to Prod'
-    #dependsOn: TestImage
+    dependsOn: TestApp
     jobs:
       - deployment: DeployToProd
+        displayName: 'Deploy to Prod'
         pool:
           vmImage: ubuntu-latest
         environment: 'Dev'
