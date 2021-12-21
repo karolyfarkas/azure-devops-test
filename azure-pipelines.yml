@@ -140,7 +140,7 @@ stages:
                 echo “OK”
               else
                 echo $result
-              exit 1
+                exit 1
               fi 
             failOnStderr: true        
         - task: HelmDeploy@0
