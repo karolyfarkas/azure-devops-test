@@ -132,8 +132,7 @@ stages:
           inputs:
             targetType: 'inline'
             script: |
-               echo test
-               #curl -I -k http://34.149.51.193/ --fail
+               curl http://34.149.51.193/ --fail
             failOnStderr: true        
         - task: HelmDeploy@0
           inputs:
