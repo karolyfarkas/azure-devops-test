@@ -1,5 +1,5 @@
 trigger:
-- main
+- mainfr
 
 resources:
       repositories:
