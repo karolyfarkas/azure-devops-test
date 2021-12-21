@@ -3,6 +3,7 @@ trigger:
 
 resources:
       repositories:
+      # repo containing the helm chart and container structure test files
       - repository: hello-deploy
         type: github
         endpoint: karolyfarkas-github
@@ -52,9 +53,12 @@ stages:
         steps:
         - checkout: hello-deploy
           persistCredentials: true
-        - script: npm install typed-rest-client --save 
-          displayName: Azure DevOps Patch Install missing packages for ContainerStructureTest
+        - script: npm install typed-rest-client --save
+          # this step is required because of a bug, not yet patched
+          displayName: 'Azure DevOps Patch Install missing packages for ContainerStructureTest'
         - task: ContainerStructureTest@0
+          # this step is running multiple tests on the container, see cst-config.yaml
+          displayName: 'Container Structure Test'
           inputs:
             dockerRegistryServiceConnection: 'google-artifact-registry'
             repository: 'farkasret/test/hello'
@@ -63,6 +67,7 @@ stages:
             testRunTitle: 'CST'
             failTaskOnFailedTests: true 
         - task: Bash@3
+          # placeholder for future tests
           displayName: 'Testing'
           inputs:
             targetType: 'inline'
@@ -114,22 +119,22 @@ stages:
                   chartName: 'helm-chart'
                   releaseName: 'hello'
 
-  - stage: TestApp
-    displayName: 'Test the Application'
-    dependsOn: DeployToTest
-    jobs:
-      - job: TestApp
-        displayName: 'Test the Application'
-        pool:
-          vmImage: ubuntu-latest
-        steps:
-        - task: HelmDeploy@0
-          inputs:
-            connectionType: 'Kubernetes Service Connection'
-            kubernetesServiceConnection: 'gke-test-cluster'
-            namespace: 'test'
-            command: 'uninstall'
-            arguments: 'hello'
+  # - stage: TestApp
+  #   displayName: 'Test the Application'
+  #   dependsOn: DeployToTest
+  #   jobs:
+  #     - job: TestApp
+  #       displayName: 'Test the Application'
+  #       pool:
+  #         vmImage: ubuntu-latest
+  #       steps:
+  #        - task: HelmDeploy@0
+  #          inputs:
+  #            connectionType: 'Kubernetes Service Connection'
+  #            kubernetesServiceConnection: 'gke-test-cluster'
+  #            namespace: 'test'
+  #            command: 'uninstall'
+  #            arguments: 'hello'
 
   - stage: DeployToProd
     displayName: 'Deploy to Prod'
