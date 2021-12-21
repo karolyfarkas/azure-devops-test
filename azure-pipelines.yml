@@ -46,6 +46,7 @@ stages:
     dependsOn: Build
     jobs:
       - job: TestImage
+        displayName: 'Test Image'
         pool:
           vmImage: ubuntu-latest
         steps:
@@ -128,7 +129,7 @@ stages:
             kubernetesServiceConnection: 'gke-test-cluster'
             namespace: 'test'
             command: 'uninstall'
-            releaseName: 'hello'
+            arguments: 'hello'
 
   - stage: DeployToProd
     displayName: 'Deploy to Prod'
