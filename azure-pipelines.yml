@@ -129,10 +129,11 @@ stages:
           vmImage: ubuntu-latest
         steps:
         - task: Bash@3
+          displayName: 'Test website availability'
           inputs:
             targetType: 'inline'
             script: |
-               curl http://34.149.51.193/ --fail
+               curl http://34.149.51.193/
             failOnStderr: true        
         - task: HelmDeploy@0
           inputs:
