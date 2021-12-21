@@ -127,14 +127,20 @@ stages:
         displayName: 'Test the Application'
         pool:
           vmImage: ubuntu-latest
-  #       steps:
-  #        - task: HelmDeploy@0
-  #          inputs:
-  #            connectionType: 'Kubernetes Service Connection'
-  #            kubernetesServiceConnection: 'gke-test-cluster'
-  #            namespace: 'test'
-  #            command: 'uninstall'
-  #            arguments: 'hello'
+        steps:
+        - task: Bash@3
+          inputs:
+            targetType: 'inline'
+            script: |
+               curl -I -k http://34.149.51.193/ --fail
+            failOnStderr: true        
+        - task: HelmDeploy@0
+          inputs:
+            connectionType: 'Kubernetes Service Connection'
+            kubernetesServiceConnection: 'gke-test-cluster'
+            namespace: 'test'
+            command: 'uninstall'
+            arguments: 'hello'
 
   - stage: DeployToProd
     displayName: 'Deploy to Prod'
