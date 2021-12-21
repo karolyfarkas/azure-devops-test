@@ -69,7 +69,7 @@ stages:
 
   - stage: DeployToTest
     displayName: 'Deploy to Test'
-    dependsOn: Test
+    dependsOn: TestImage
     jobs:
       - deployment: DeployToTest
         pool:
@@ -114,7 +114,7 @@ stages:
 
   - stage: DeployToProd
     displayName: 'Deploy to Prod'
-    dependsOn: Test
+    #dependsOn: TestImage
     jobs:
       - deployment: DeployToProd
         pool:
