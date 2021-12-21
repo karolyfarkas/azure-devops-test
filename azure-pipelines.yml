@@ -133,7 +133,15 @@ stages:
           inputs:
             targetType: 'inline'
             script: |
-               curl http://34.149.51.193/ 
+              result=$(curl -s -o /dev/null -w %{http_code} 34.149.51.193/)
+
+              if [ $result == 200 ]
+              then
+                echo “OK”
+              else
+                echo $result
+                exit 1
+              fi 
             failOnStderr: true        
         - task: HelmDeploy@0
           inputs:
