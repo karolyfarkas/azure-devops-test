@@ -34,7 +34,7 @@ stages:
           - task: Docker@2
             displayName: 'Build docker image'
             inputs:
-              containerRegistry: 'google-artifact-registryy'
+              containerRegistry: 'google-artifact-registry'
               repository: 'farkasret/test/hello'
               command: 'buildAndPush'
               Dockerfile: 'Dockerfile'
@@ -48,6 +48,16 @@ stages:
         pool:
           vmImage: ubuntu-latest
         steps:
+        - checkout: hello-deploy
+          persistCredentials: true
+        - task: ContainerStructureTest@0
+          inputs:
+            dockerRegistryServiceConnection: 'google-artifact-registry'
+            repository: 'farkasret/test/hello'
+            tag: '$(Build.BuildNumber)'
+            configFile: 'cst-config.yaml'
+            testRunTitle: 'CST'
+            failTaskOnFailedTests: true 
         - task: Bash@3
           displayName: 'Testing'
           inputs:
@@ -82,7 +92,7 @@ stages:
                     git checkout main
                     sed -i 's|appVersion:.*|appVersion: "$(Build.BuildNumber)"|' helm-chart/Chart.yaml
                     git add helm-chart/Chart.yaml
-                    git commit -am 'autorelease $(Build.BuildNumber) by pipeline'
+                    git commit -am 'autorelease by pipeline'
                     git push
               - task: HelmInstaller@0
                 inputs:
