@@ -41,10 +41,11 @@ stages:
               tags: '$(Build.BuildNumber)'
               addPipelineData: false
             
-  - stage: Test
+  - stage: TestImage
+    displayName: 'Test Image'
     dependsOn: Build
     jobs:
-      - job: Test
+      - job: TestImage
         pool:
           vmImage: ubuntu-latest
         steps:
@@ -66,10 +67,56 @@ stages:
             targetType: 'inline'
             script: 'echo Testing....1....2...1...2....'
 
-  - stage: Deploy
+  - stage: DeployToTest
+    displayName: 'Deploy to Test'
     dependsOn: Test
     jobs:
-      - deployment:
+      - deployment: DeployToTest
+        pool:
+          vmImage: ubuntu-latest
+        environment: 'Dev'
+        strategy:
+         runOnce:
+           deploy:
+             steps:
+              - checkout: hello-deploy
+                persistCredentials: true
+              - task: Bash@3
+                displayName: 'Troubleshooting...'
+                inputs:
+                  targetType: 'inline'
+                  script: 'ls'
+              - task: Bash@3
+                displayName: 'Change version number in helm chart'
+                inputs:
+                  targetType: 'inline'
+                  script: |
+                    git config user.email azure-pipelines@aka.ms
+                    git config user.name azure-pipelines
+                    git checkout main
+                    sed -i 's|appVersion:.*|appVersion: "$(Build.BuildNumber)"|' helm-chart/Chart.yaml
+                    git add helm-chart/Chart.yaml
+                    git commit -am 'autorelease by pipeline'
+                    git push
+              - task: HelmInstaller@0
+                inputs:
+                  helmVersion: '2.14.1'
+                  installKubectl: true
+              - task: HelmDeploy@0
+                inputs:
+                  connectionType: 'Kubernetes Service Connection'
+                  kubernetesServiceConnection: 'gke-test-cluster'
+                  namespace: 'test'
+                  command: 'upgrade'
+                  chartType: 'Name'
+                  chartName: 'helm-chart'
+                  releaseName: 'hello'
+
+  - stage: DeployToProd
+    displayName: 'Deploy to Prod'
+    dependsOn: Test
+    jobs:
+      - deployment: DeployToProd
         pool:
           vmImage: ubuntu-latest
         environment: 'Dev'
