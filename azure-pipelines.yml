@@ -133,7 +133,7 @@ stages:
           inputs:
             targetType: 'inline'
             script: |
-               curl http://34.149.51.193/
+               curl http://34.149.51.193/ 
             failOnStderr: true        
         - task: HelmDeploy@0
           inputs:
