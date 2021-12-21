@@ -119,14 +119,14 @@ stages:
                   chartName: 'helm-chart'
                   releaseName: 'hello'
 
-  # - stage: TestApp
-  #   displayName: 'Test the Application'
-  #   dependsOn: DeployToTest
-  #   jobs:
-  #     - job: TestApp
-  #       displayName: 'Test the Application'
-  #       pool:
-  #         vmImage: ubuntu-latest
+  - stage: TestApp
+    displayName: 'Test the Application'
+    dependsOn: DeployToTest
+    jobs:
+      - job: TestApp
+        displayName: 'Test the Application'
+        pool:
+          vmImage: ubuntu-latest
   #       steps:
   #        - task: HelmDeploy@0
   #          inputs:
