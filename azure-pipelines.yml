@@ -1,7 +1,6 @@
 trigger: 
 - main
 
-
 resources:
       repositories:
       # repo containing the helm chart and container structure test files
