@@ -106,10 +106,12 @@ stages:
                     git commit -am 'autorelease by pipeline'
                     git push
               - task: HelmInstaller@0
+                # install helm
                 inputs:
                   helmVersion: '2.14.1'
                   installKubectl: true
               - task: HelmDeploy@0
+                # deploy the app to the test namespace
                 inputs:
                   connectionType: 'Kubernetes Service Connection'
                   kubernetesServiceConnection: 'gke-test-cluster'
@@ -142,8 +144,9 @@ stages:
                 echo $result
                 exit 1
               fi 
-            failOnStderr: true        
+            failOnStderr: true
         - task: HelmDeploy@0
+          # clean up the test environment
           inputs:
             connectionType: 'Kubernetes Service Connection'
             kubernetesServiceConnection: 'gke-test-cluster'
@@ -184,10 +187,12 @@ stages:
                     git commit -am 'autorelease by pipeline'
                     git push
               - task: HelmInstaller@0
+                # install helm
                 inputs:
                   helmVersion: '2.14.1'
                   installKubectl: true
               - task: HelmDeploy@0
+                # deploy the app to the default namespace
                 inputs:
                   connectionType: 'Kubernetes Service Connection'
                   kubernetesServiceConnection: 'gke-test-cluster'
